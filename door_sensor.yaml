@@ -12,10 +12,11 @@ blueprint:
           device_class: opening
     closed_wait_time:
       name: Wait time
-      description: Time to wait after sensor is closed before taking action.
+      description: Seconds to wait after sensor is closed before taking action.
       selector:
         number:
           min: 0
+      default: 120
     opened_action:
       name: Opened Action
       description: Action(s) to perform when sensor is opened.
