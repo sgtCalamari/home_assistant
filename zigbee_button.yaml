@@ -1,0 +1,51 @@
+blueprint:
+  name: Zigbee button
+  description: 'Configure Zigbee button events for single press, double press and hold.'
+  author: sgtCalamari
+  domain: automation
+  input:
+    target_button:
+      name: Target Button
+      selector:
+        device:
+          entity:
+            integration: zha
+            domain: button
+    single_press_action:
+      name: Single Press Action
+      description: Action(s) to perform in response to a single press
+      selector:
+        action:
+    double_press_action:
+      name: Double Press Action
+      description: Action(s) to perform in response to a double press
+      selector:
+        action:
+    hold_action:
+      name: Hold Action
+      description: Action(s) to perform in response to a long press (hold)
+      selector:
+        action:
+
+triggers:
+  - trigger: event
+    event_type: zha_event
+    event_data:
+      device_id: !input target_button
+
+actions:
+  - variables:
+      button_press_type: '{{ trigger.event.data.command }}'
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: '{{ button_press_type == "button_single" }}'
+        sequence: !input single_press_action
+      - conditions:
+          - condition: template
+            value_template: '{{ button_press_type == "button_double" }}'
+        sequence: !input double_press_action
+      - conditions:
+          - condition: template
+            value_template: '{{ button_press_type == "button_hold" }}'
+        sequence: !input hold_action
