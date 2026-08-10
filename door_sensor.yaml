@@ -41,7 +41,7 @@ triggers:
 
 actions:
   - variables:
-      door_closed: {{ trigger.from_state.state == "on" and trigger.to_state.state == "off" }}
+      door_closed: '{{ trigger.from_state.state == "on" and trigger.to_state.state == "off" }}'
       after_duration: '{{trigger.idx == "1"}}'
   - if:
       - condition: template
