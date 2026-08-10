@@ -26,6 +26,8 @@ blueprint:
     closed_action:
       name: Closed Action
       description: Action(s) to perform after duration when sensor is closed.
+      selector:
+        action:
 
 mode: single
 
