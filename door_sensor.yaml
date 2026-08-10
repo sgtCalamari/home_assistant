@@ -1,0 +1,62 @@
+blueprint:
+  name: Door sensor
+  description: ''
+  author: sgtCalamari
+  domain: automation
+  input:
+    door_sensor:
+      name: Target Open/Close Sensor
+      selector:
+        entity:
+          domain: binary_sensor
+          device_class: opening
+    closed_wait_time:
+      name: Wait time
+      description: Time to wait after sensor is closed before taking action.
+      selector:
+        number:
+          min: 0
+    opened_action:
+      name: Opened Action
+      description: Action(s) to perform when sensor is opened.
+      selector:
+        action:
+    closed_action:
+      name: Closed Action
+      description: Action(s) to perform after duration when sensor is closed.
+
+mode: single
+
+triggers:
+  - trigger: state
+    entity_id:
+      - !input door_sensor
+  - trigger: state
+    entity_id:
+      - !input door_sensor
+    for:
+      hours: 0
+      minutes: 0
+      seconds: !input closed_wait_time
+
+actions:
+  - variables:
+      door_closed: {{ trigger.from_state.state == "on" and trigger.to_state.state == "off" }}
+      after_duration: '{{trigger.idx == "1"}}'
+  - if:
+      - condition: template
+        value_template: '{{ after_duration }}'
+        alias: after_duration
+    then:
+      - if:
+          - condition: template
+            value_template: '{{ door_closed }}'
+            alias: door_closed
+        then: !input closed_action
+    else:
+      - if:
+          - condition: template
+            value_template: '{{ door_closed }}'
+            alias: door_closed
+        then: []
+        else: !input opened_action
